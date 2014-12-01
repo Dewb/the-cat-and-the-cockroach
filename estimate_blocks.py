@@ -1,7 +1,6 @@
 from collections import Counter
 from itertools import chain, tee, izip
 from codecs import open
-from operator import itemgetter
 
 def main(corpus):
 	minimum_blockword_length = 3
