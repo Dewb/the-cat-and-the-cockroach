@@ -5,7 +5,7 @@ from operator import itemgetter
 
 def main(corpus):
 	minimum_blockword_length = 3
-	num_blockwords = 20
+	num_blockwords = 10
 
 	blockwords = get_blockwords(corpus, minimum_blockword_length, num_blockwords)
 	blocks = {}
@@ -15,7 +15,7 @@ def main(corpus):
 				blocks[block] = count
 
 	totalsize = 0
-	for block, count in sorted(blocks.items(), key=itemgetter(1)):
+	for block, count in sorted(blocks.items(), key=lambda x: (-x[1], x[0])):
 		print str(count) + " " + block
 		totalsize = totalsize + len(block) * count
 
