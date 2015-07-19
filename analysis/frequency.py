@@ -1,9 +1,10 @@
 from collections import Counter
+import sys
 
 def read_words(words_file):
     return [word for line in open(words_file, 'r') for word in line.split()]
 
-words = read_words("archy_corpus.txt")
+words = read_words(sys.argv[1])
 minimum_word_length = 3
 num_words = 20
 
