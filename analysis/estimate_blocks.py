@@ -6,6 +6,7 @@ import sys
 def main(corpus):
     minimum_blockword_length = 3
     num_blockwords = 3
+    blocks_per_line = 4
 
     blockwords = get_blockwords(corpus, minimum_blockword_length, num_blockwords)
     blocks = {}
@@ -28,13 +29,14 @@ def main(corpus):
     print "Total block size: " + str(totalsize)
 
     for l in wordblocks:
-        if len(l) < 4 and len(singleblocks) > 4 - len(l):
-            filler = singleblocks[0:(4 - len(l))]
-            del singleblocks[0:(4 - len(l))]
+        d = blocks_per_line - len(l)
+        if d > 0 and len(singleblocks) > d:
+            filler = singleblocks[0:d]
+            del singleblocks[0:d]
             print l + ''.join(filler)
         else:
             print l
-    for l in chunks(singleblocks, 4):
+    for l in chunks(singleblocks, blocks_per_line):
         print ''.join(l)
 
 
