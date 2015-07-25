@@ -5,10 +5,11 @@ import sys
 
 def main(corpus):
     minimum_blockword_length = 3
-    num_blockwords = 3
+    maximum_blockword_length = 4
+    num_blockwords = 10
     blocks_per_line = 4
 
-    blockwords = get_blockwords(corpus, minimum_blockword_length, num_blockwords)
+    blockwords = get_blockwords(corpus, minimum_blockword_length, maximum_blockword_length, num_blockwords)
     blocks = {}
     for l1, l2 in get_linepairs(corpus):
         for block, count in Counter(split_into_blocks(chain(l1.split(), l2.split()), blockwords)).most_common():
@@ -55,12 +56,12 @@ def split_into_blocks(words, blockwords):
 def read_words(words_file):
     return [word for line in open(words_file, 'r', encoding='UTF-8') for word in line.split()]
 
-def get_blockwords(corpus, minimum_word_length, num_words):
+def get_blockwords(corpus, minimum_word_length, maximum_word_length, num_words):
     words = read_words(corpus)
     counted_words = Counter(words)
 
     for word in list(counted_words):
-        if len(word) < minimum_word_length:
+        if len(word) < minimum_word_length or len(word) > maximum_word_length:
             del counted_words[word]
 
     return [word for word, count in counted_words.most_common(num_words)]
