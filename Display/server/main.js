@@ -4,11 +4,13 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var webport = process.env.PORT || 8000;
 
-var SerialPort = require("serialport").SerialPort
+var SerialPort = require("serialport").SerialPort;
 var arduinoSerial = new SerialPort("/dev/virtual-tty", {
   baudrate: 57600
 });
 
+var fs = require("fs");
+var logFile = fs.createWriteStream("/Users/dewb/blunderwood_log", { flags: 'a' });
 
 server.listen(webport, function () {
   console.log('Server listening at port %d', webport);
@@ -37,6 +39,7 @@ arduinoSerial.on("open", function () {
 
   arduinoSerial.on('data', function(data) {
     console.log('data received: ' + data);
+    logFile.write(data);
     io.emit('t', ab2str(data));
   });
 
