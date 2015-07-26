@@ -10,29 +10,72 @@
   			src: url('uwch.ttf');
 		}
   		body { 
-  			font-family: "UnderwoodChampion"; background-color: white; color: black; 
-  			width: 100%; height: 100%; margin: 2em;
+  			font-family: "UnderwoodChampion"; background-color: white; color: black; font-size: 22pt;
+  			width: 100%; height: 100%;;
   		}
   		canvas { -webkit-transform: translate3d(0, 0, 0); }
+  		div#page {
+			display: block;
+    		vertical-align: bottom;
+    		white-space: pre;
+    		top: 6em;
+    		height: 16em;
+    		overflow: hidden;
+    		margin-top: 6em;
+    		margin-left: 5em;
+    		margin-right: 5em;
+  		}
+  		div#currentLine {
+  			display: block;
+  			position: absolute;
+  			top: 22em;
+  			height: 30pt;
+  			width: 40%;
+  			/*background-color: #f4f4f4;*/
+  			text-align: right;
+  			margin-left: 3em;
+  			overflow: hidden;
+  		}
 	</style>
 	<script>
 
 	$(document).ready(function() {
 
+		var lineLength = 40;
+
 		var socket = io("http://localhost:8000", { 'path': '/socket.io' });
 
 		socket.on('t', function (data) {
-			$('body').append(data);
+			if (data == '\n' || $('#currentLine').text().length > lineLength) {
+				$('#page').append($('#currentLine').text() + "\n");
+				$('#page')[0].scrollTop = $('#page')[0].scrollHeight;
+				$('#currentLine').empty();
+			} else {
+				$('#currentLine').append(data[0]);
+			}
+		});
+
+		socket.on('reload', function() {
+			window.location.reload();
 		});
 	});
 	</script>
 </head>
 <body>
-	<p>This is some test text</p>
-	<p>This is some test text</p>
-	<p>This is some test text</p>
-	<p>This is some test text</p>
-	<p>This is some test text</p>
-	<p>This is some test text</p>
-	<p>This is some test text</p>
+	<div id="page">expression is the need of my soul
+i was once a vers libre bard
+but i died and my soul went
+into the body of a cockroach
+it has given me a new outlook on life
+
+i see things from the under side now
+
+
+
+
+
+
+
+</div>
+	<div id="currentLine"></div>
 </body>
