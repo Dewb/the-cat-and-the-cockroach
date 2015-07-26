@@ -23,7 +23,7 @@
     		overflow: hidden;
     		margin-top: 6em;
     		margin-left: 5em;
-    		margin-right: 5em;
+    		width: 32em;
   		}
   		div#currentLine {
   			display: block;
@@ -41,7 +41,7 @@
 
 	$(document).ready(function() {
 
-		var lineLength = 40;
+		var lineLength = 46;
 
 		var socket = io("http://localhost:8000", { 'path': '/socket.io' });
 
