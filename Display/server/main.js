@@ -5,8 +5,8 @@ var io = require('socket.io')(server);
 var webport = process.env.PORT || 8000;
 
 var SerialPort = require("serialport").SerialPort;
-var arduinoSerial = new SerialPort("/dev/virtual-tty", {
-  baudrate: 57600
+var arduinoSerial = new SerialPort("/dev/cu.usbmodem1411", {
+  baudrate: 115200
 });
 
 var fs = require("fs");
