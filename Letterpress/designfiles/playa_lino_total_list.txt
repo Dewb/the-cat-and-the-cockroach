@@ -1,0 +1,73 @@
+10 o
+9 e
+8 n
+7 a
+7 h
+7 i
+7 s
+7 t
+6 m
+6 r
+5 d
+5 l
+4 c
+4 f
+4 p
+4 u
+4 y
+3 ,
+3 and
+3 b
+3 g
+3 the
+3 v
+3 w
+3 x
+2 are
+2 k
+1 :
+1 ?
+1 j
+1 q
+1 z
+1 ’
+Total block size: 154
+ando
+ando
+ando
+theo
+theo
+theo
+areo
+areo
+ooee
+eeee
+eeen
+nnnn
+nnna
+aaaa
+aahh
+hhhh
+hiii
+iiii
+ssss
+ssst
+tttt
+ttmm
+mmmm
+rrrr
+rrdd
+dddl
+llll
+cccc
+ffff
+pppp
+uuuu
+yyyy
+,,,b
+bbgg
+gvvv
+wwwx
+xxkk
+:?jq
+z’

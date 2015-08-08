@@ -3,13 +3,14 @@ from itertools import chain, tee, izip
 from codecs import open
 import sys
 
-def main(corpus):
+def main(corpus, num_blockwords):
     minimum_blockword_length = 3
     maximum_blockword_length = 4
-    num_blockwords = 10
     blocks_per_line = 4
 
-    blockwords = get_blockwords(corpus, minimum_blockword_length, maximum_blockword_length, num_blockwords)
+    blockwords = []
+    if num_blockwords > 0:
+        blockwords = get_blockwords(corpus, minimum_blockword_length, maximum_blockword_length, num_blockwords)
     blocks = {}
     for l1, l2 in get_linepairs(corpus):
         for block, count in Counter(split_into_blocks(chain(l1.split(), l2.split()), blockwords)).most_common():
@@ -87,4 +88,4 @@ def get_linepairs(corpus):
     return pairwise(nonblank_lines(nonlong_lines(60, open(corpus, 'r', encoding='UTF-8'))))
 
 
-main(sys.argv[1])
+main(sys.argv[1], int(sys.argv[2]))
