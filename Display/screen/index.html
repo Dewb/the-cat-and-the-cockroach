@@ -52,6 +52,7 @@
 				$('#currentLine').empty();
 			} else {
 				$('#currentLine').append(data[0]);
+				$('#currentLine')[0].scrollLeft = $('#page')[0].scrollWidth;
 			}
 		});
 
