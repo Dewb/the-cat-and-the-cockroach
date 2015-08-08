@@ -91,6 +91,7 @@ SerialInputMode.connect = function() {
     modeContext.arduinoPort = arduinoPort;
     arduinoPort.on("open", function (err) {
       if (err) {
+        arduinoPort = null;
         modeContext.retry();
       } else {
         console.log('Serial connection to ' + arduinoPortName + ' established');
@@ -129,9 +130,10 @@ SerialInputMode.updateOptions = function(options) {
 
 SerialInputMode.deactivate = function() {
 
-  this.arduinoPort.close();
-  this.arduinoPort = null;
-
+  if (this.arduinoPort) {
+    this.arduinoPort.close();
+    this.arduinoPort = null;
+  }
 }
 
 module.exports = SerialInputMode;
