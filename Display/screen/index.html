@@ -3,6 +3,7 @@
 <head>
 	<title></title>
     <script src="jquery.min.js"></script>
+    <script src="audio.js"></script>
     <script src="http://localhost:8000/socket.io/socket.io.js"></script>
 	<style>
   		@font-face {
@@ -39,21 +40,55 @@
 	</style>
 	<script>
 
+  function initAudio() {
+    window.soundPlayer = new RapidSoundPlayer(window.context, [
+      "media/ddohler_keyhit.wav",
+      "media/bell.wav",
+      "media/pullback_1.wav",
+      "media/pullback_2.wav",
+      "media/pullback_3.wav",
+      "media/pullback_4.wav",
+      "media/pullback_5.wav"
+    ]);
+  }
+
+  function getRandomIndex(minInclusive, maxInclusive) {
+    return Math.floor(Math.random() * (maxInclusive + 1 - minInclusive)) + minInclusive;
+  }
+
 	$(document).ready(function() {
 
 		var lineLength = 46;
 
+    initAudio();
+
 		var socket = io("http://localhost:8000", { 'path': '/socket.io' });
 
 		socket.on('t', function (data) {
+      soundPlayer.playSound(0, 1, 0, 0.08, 0.15);
+
 			if (data == '\n' || $('#currentLine').text().length > lineLength) {
+
+        if (data != '\n') {
+          soundPlayer.playSound(1, 1, 0, 0.03); // bell
+          $('#currentLine').append(data);
+        }
+
 				$('#page').append($('#currentLine').text() + "\n");
 				$('#page')[0].scrollTop = $('#page')[0].scrollHeight;
-				$('#currentLine').empty();
+				
+        if ($('#currentLine').text().length > 6) {
+          soundPlayer.playSound(getRandomIndex(2, 6), 1, 0, 0.03, 0.12); // carriage pullback
+        }
+
+        $('#currentLine').empty();
+
 			} else {
-				$('#currentLine').append(data[0]);
+				$('#currentLine').append(data);
 				$('#currentLine')[0].scrollLeft = $('#page')[0].scrollWidth;
 			}
+
+
 		});
 
 		socket.on('reload', function() {
