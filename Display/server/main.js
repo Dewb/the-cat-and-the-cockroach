@@ -65,17 +65,26 @@ var arduinoPort = new serial.SerialPort(arduinoPortName, {
   flowControl: false
 });
 
+function byteToHTML(byte) {
+  //if (byte == 0x08 || byte == 0x7F) { // backspace
+  //  return '&xlarr;';
+  //} 
+
+  return String.fromCharCode(byte);
+}
+
 function ab2str(buf) {
-  return String.fromCharCode.apply(null, new Uint16Array(buf));
+  return byteToHTML.apply(null, new Uint16Array(buf));
 }
 
 arduinoPort.on("open", function () {
   console.log('Serial connection to ' + arduinoPortName + ' established');
 
-  arduinoPort.on('data', function(data) {
+  arduinoPort.on('data', function(rawdata) {
+    var data = ab2str(rawdata);
     console.log('data received: ' + data);
     logFile.write(data);
-    socketio.emit('t', ab2str(data));
+    socketio.emit('t', data);
   });
 });
 
