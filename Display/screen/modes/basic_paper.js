@@ -23,7 +23,6 @@ var BasicPaperMode = function(container, options) {
 		"display": "block",
 		"position": "absolute",
   		"white-space": "pre",
-  		"overflow": "hidden",
   		"text-align": "right",
     });
 
@@ -89,16 +88,8 @@ BasicPaperMode.prototype.onKeyHit = function(data) {
     	}
 
     	// Add the current line text to the page and scroll up
-		$('#page').append($('#currentLine').text() + "\n");
+		$('#page').append($('#currentLine').html() + "\n");
 		$('#page')[0].scrollTop = $('#page')[0].scrollHeight;
-			
-    	// Convert current line overlays to page overlays
-    	var shift = $(this.options.lineOffset).EmToPx() - (this.options.lineLength - currentLength) * ($('.currentLineOvertype').width());
-    	$('.currentLineOvertype').css("left", "+=" + shift)
-		$('.currentLineOvertype').removeClass("currentLineOvertype").addClass("pageOvertype");
-
-		// Move page overlays up
-    	$('.pageOvertype').css("top", "-=" + this.options.fontSize * 1.5);
 
     	// Clear the line
     	$('#currentLine').empty();
@@ -118,17 +109,21 @@ BasicPaperMode.prototype.onKeyHit = function(data) {
 				return t.slice(0, -1);
 			});
 
-			$('.currentLineOvertype').css("left", "+=" + $('.currentLineOvertype').width());
-
-			var overType = $('<div>', { class: "currentLineOvertype" });
+			var overType = $('<span>', { class: "overType" });
 			overType.css({
-				"position": "absolute",
-				"left": (this.options.width - this.options.lineOffset) + "em",
-				"top": (this.options.top + this.options.height) + "em",
+				"position": "relative",
+				"width": 0,
+				"height": 0,
 			});
-			overType.append(lastChar);
 
-			this.container.append(overType);
+			var overTypeInner = $('<span>');
+			overTypeInner.css({
+				"position": "absolute",
+			});
+			overTypeInner.append(lastChar);
+			overType.append(overTypeInner);
+
+			$('#currentLine').append(overType);
 		}
 
 	} else {
@@ -136,7 +131,6 @@ BasicPaperMode.prototype.onKeyHit = function(data) {
 		$('#currentLine').append(data);
 		$('#currentLine').scrollLeft(9999); //$('#page')[0].scrollWidth;
 
-		$('.currentLineOvertype').css("left", "-=" + + $('.currentLineOvertype').width());
 	}
 
 };
