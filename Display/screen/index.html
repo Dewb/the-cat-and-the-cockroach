@@ -4,6 +4,7 @@
 	<title></title>
     <script src="jquery.min.js"></script>
     <script src="audio.js"></script>
+    <script src="modes/basic_paper.js"></script>
     <script src="http://localhost:8000/socket.io/socket.io.js"></script>
 	<style>
   		@font-face {
@@ -15,28 +16,7 @@
   			width: 100%; height: 100%;;
   		}
   		canvas { -webkit-transform: translate3d(0, 0, 0); }
-  		div#page {
-			display: block;
-    		vertical-align: bottom;
-    		white-space: pre;
-    		top: 6em;
-    		height: 16em;
-    		overflow: hidden;
-    		margin-top: 6em;
-    		margin-left: 5em;
-    		width: 32em;
-  		}
-  		div#currentLine {
-  			display: block;
-  			position: absolute;
-  			top: 22em;
-  			height: 30pt;
-  			width: 40%;
-  			/*background-color: #f4f4f4;*/
-  			text-align: right;
-  			margin-left: 3em;
-  			overflow: hidden;
-  		}
+
 	</style>
 	<script>
 
@@ -58,38 +38,23 @@
 
 	$(document).ready(function() {
 
-		var lineLength = 46;
-
     initAudio();
 
 		var socket = io("http://localhost:8000", { 'path': '/socket.io' });
 
+    window.currentScreenMode = new BasicPaperMode($(document.body), { lineLength: 46, defaultText: false });
+
 		socket.on('t', function (data) {
-      soundPlayer.playSound(0, 1, 0, 0.08, 0.15);
-
-			if (data == '\n' || $('#currentLine').text().length > lineLength) {
-
-        if (data != '\n') {
-          soundPlayer.playSound(1, 1, 0, 0.03); // bell
-          $('#currentLine').append(data);
-        }
-
-				$('#page').append($('#currentLine').text() + "\n");
-				$('#page')[0].scrollTop = $('#page')[0].scrollHeight;
-				
-        if ($('#currentLine').text().length > 6) {
-          soundPlayer.playSound(getRandomIndex(2, 6), 1, 0, 0.03, 0.12); // carriage pullback
-        }
-
-        $('#currentLine').empty();
-
-			} else {
-				$('#currentLine').append(data);
-				$('#currentLine')[0].scrollLeft = $('#page')[0].scrollWidth;
-			}
-
-
+      currentScreenMode.onKeyHit(data);
 		});
+
+    socket.on('changeScreenMode', function (modeName) {
+      if (modeName == "BasicPaper") {
+        window.currentScreenMode = new BasicPaperMode($(document.body), { lineLength: 46, defaultText: false });
+      } else {
+
+      }
+    });
 
 		socket.on('reload', function() {
 			window.location.reload();
@@ -98,20 +63,4 @@
 	</script>
 </head>
 <body>
-	<div id="page">expression is the need of my soul
-i was once a vers libre bard
-but i died and my soul went
-into the body of a cockroach
-it has given me a new outlook on life
-
-i see things from the under side now
-
-
-
-
-
-
-
-</div>
-	<div id="currentLine"></div>
 </body>
