@@ -22,6 +22,7 @@ var BasicPaperMode = function(container, options) {
     currentLine.css({
 		"display": "block",
 		"position": "absolute",
+  		"white-space": "pre",
   		"overflow": "hidden",
   		"text-align": "right",
     });
@@ -37,6 +38,8 @@ var BasicPaperMode = function(container, options) {
 	} else {
 		page.append("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 	}
+
+	this.container = container;
 
 	container.empty();
 	container.append(page);
@@ -75,27 +78,65 @@ BasicPaperMode.prototype.getOptions = function() {
 BasicPaperMode.prototype.onKeyHit = function(data) {
 	soundPlayer.playSound(0, 1, 0, 0.08, 0.15);
 
-	if (data == '\n' || $('#currentLine').text().length > this.options.lineLength) {
+	var currentLength = $('#currentLine').text().length;
 
+	if (data == '\n' || currentLength > this.options.lineLength) {
+
+		// If we hit the line limit, play the bell
     	if (data != '\n') {
         	soundPlayer.playSound(1, 1, 0, 0.03); // bell
         	$('#currentLine').append(data);
     	}
 
+    	// Add the current line text to the page and scroll up
 		$('#page').append($('#currentLine').text() + "\n");
 		$('#page')[0].scrollTop = $('#page')[0].scrollHeight;
-				
-    	if ($('#currentLine').text().length > 6) {
+			
+    	// Convert current line overlays to page overlays
+    	var shift = $(this.options.lineOffset).EmToPx() - (this.options.lineLength - currentLength) * ($('.currentLineOvertype').width());
+    	$('.currentLineOvertype').css("left", "+=" + shift)
+		$('.currentLineOvertype').removeClass("currentLineOvertype").addClass("pageOvertype");
+
+		// Move page overlays up
+    	$('.pageOvertype').css("top", "-=" + this.options.fontSize * 1.5);
+
+    	// Clear the line
+    	$('#currentLine').empty();
+
+    	// If the line was long enough, play the pullback sound	
+    	if (currentLength > 6) {
       		soundPlayer.playSound(getRandomIndex(2, 6), 1, 0, 0.03, 0.12); // carriage pullback
     	}
 
-    	$('#currentLine').empty();
-	
+
+	} else if (data == "«") {
+		
+		// Backspace
+		if ($('#currentLine').text().length > 0) {
+			var lastChar = $('#currentLine').text().slice(-1);
+			$('#currentLine').text(function (_, t) {
+				return t.slice(0, -1);
+			});
+
+			$('.currentLineOvertype').css("left", "+=" + $('.currentLineOvertype').width());
+
+			var overType = $('<div>', { class: "currentLineOvertype" });
+			overType.css({
+				"position": "absolute",
+				"left": (this.options.width - this.options.lineOffset) + "em",
+				"top": (this.options.top + this.options.height) + "em",
+			});
+			overType.append(lastChar);
+
+			this.container.append(overType);
+		}
+
 	} else {
 		
 		$('#currentLine').append(data);
 		$('#currentLine').scrollLeft(9999); //$('#page')[0].scrollWidth;
-	
+
+		$('.currentLineOvertype').css("left", "-=" + + $('.currentLineOvertype').width());
 	}
 
 };

@@ -66,9 +66,9 @@ var arduinoPort = new serial.SerialPort(arduinoPortName, {
 });
 
 function byteToHTML(byte) {
-  //if (byte == 0x08 || byte == 0x7F) { // backspace
-  //  return '&xlarr;';
-  //} 
+  if (byte == 0x08 || byte == 0x7F) { // backspace
+    return '«';
+  } 
 
   return String.fromCharCode(byte);
 }
