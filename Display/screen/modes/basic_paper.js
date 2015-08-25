@@ -45,6 +45,9 @@ var BasicPaperMode = function(container, options) {
 	container.append(currentLine);
 
 	this.updateOptions(options);
+
+	this.currentLineCharactersInked = 0;
+	this.currentLineBackspaceCount = 0;
 };
 
 BasicPaperMode.prototype.updateOptions = function(options) {
@@ -77,9 +80,7 @@ BasicPaperMode.prototype.getOptions = function() {
 BasicPaperMode.prototype.onKeyHit = function(data) {
 	soundPlayer.playSound(0, 1, 0, 0.08, 0.15);
 
-	var currentLength = $('#currentLine').text().length;
-
-	if (data == '\n' || currentLength > this.options.lineLength) {
+	if (data == '\n' || this.currentLineCharactersInked + 1 >= this.options.lineLength) {
 
 		// If we hit the line limit, play the bell
     	if (data != '\n') {
@@ -95,20 +96,23 @@ BasicPaperMode.prototype.onKeyHit = function(data) {
     	$('#currentLine').empty();
 
     	// If the line was long enough, play the pullback sound	
-    	if (currentLength > 6) {
+    	if (this.currentLineCharactersInked > 6) {
       		soundPlayer.playSound(getRandomIndex(2, 6), 1, 0, 0.03, 0.12); // carriage pullback
     	}
 
+    	this.currentLineCharactersInked = 0;
+    	this.currentLineBackspaceCount = 0;
 
 	} else if (data == "«") {
 		
-		// Backspace
-		if ($('#currentLine').text().length > 0) {
-			var lastChar = $('#currentLine').text().slice(-1);
-			$('#currentLine').text(function (_, t) {
-				return t.slice(0, -1);
-			});
+		if (this.currentLineBackspaceCount < this.currentLineCharactersInked) {
+			$('#currentLine').css("left", "+=" + $(0.6).EmToPx());
+			this.currentLineBackspaceCount++;
+		}
 
+	} else {
+
+		if (this.currentLineBackspaceCount > 0) {
 			var overType = $('<span>', { class: "overType" });
 			overType.css({
 				"position": "relative",
@@ -119,17 +123,22 @@ BasicPaperMode.prototype.onKeyHit = function(data) {
 			var overTypeInner = $('<span>');
 			overTypeInner.css({
 				"position": "absolute",
+				"left": -0.6 * this.currentLineBackspaceCount + "em",
 			});
-			overTypeInner.append(lastChar);
+			overTypeInner.append(data);
 			overType.append(overTypeInner);
 
 			$('#currentLine').append(overType);
+			$('#currentLine').css("left", "-=" + $(0.6).EmToPx());
+
+			this.currentLineBackspaceCount--;
+
+		} else {
+			$('#currentLine').append(data);
+			this.currentLineCharactersInked++;
 		}
 
-	} else {
-		
-		$('#currentLine').append(data);
-		$('#currentLine').scrollLeft(9999); //$('#page')[0].scrollWidth;
+		$('#currentLine').scrollLeft(9999); 
 
 	}
 
