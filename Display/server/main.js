@@ -15,14 +15,14 @@ app.use('/control', express.static(__dirname + '/../control'));
 var socketio = require('socket.io')(server);
 
 // Server modes
-var SerialInputMode = require('./modes/serialInput.js');
-var serverModeList = {};
-serverModeList[SerialInputMode.name] = SerialInputMode;
-
+var serverModeList = {
+  "SerialInput": require('./modes/serialInput.js'),
+  "RepeatMessage": require('./modes/repeatMessage.js'),
+}
 var currentMode = null;
 
 function setServerMode(newModeName, options) {
-  if ((currentMode == null || newModeName != currentMode.name) && newModeName in serverModeList) {
+  if (newModeName in serverModeList) {
     if (currentMode != null) {
       currentMode.deactivate();
     }
@@ -31,7 +31,7 @@ function setServerMode(newModeName, options) {
   }
 }
 
-setServerMode(SerialInputMode.name, {});
+setServerMode("SerialInput", {});
 
 socketio.on('connection', function (socket) {
   console.log("New socket connection");
