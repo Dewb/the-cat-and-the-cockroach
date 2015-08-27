@@ -20,23 +20,28 @@ var serverModeList = {
   "SerialInput": require('./modes/serialInput.js'),
   "RepeatMessage": require('./modes/repeatMessage.js'),
 }
-var currentMode = null;
+var currentServerMode = null;
 
 function setServerMode(newModeName, options) {
   if (newModeName in serverModeList) {
-    if (currentMode != null) {
-      currentMode.deactivate();
+    if (currentServerMode != null) {
+      currentServerMode.deactivate();
     }
-    currentMode = serverModeList[newModeName];
-    currentMode.activate(socketio, options);
+    currentServerMode = serverModeList[newModeName];
+    currentServerMode.activate(socketio, options);
     console.log("Server mode now " + newModeName);
   }
 }
 
 setServerMode("SerialInput", {});
 
+var currentScreenModeName = "";
+var currentScreenModeOptions = {};
+
 socketio.on('connection', function (socket) {
   console.log("New socket connection");
+
+  socket.emit('changeScreenMode', currentScreenModeName, currentScreenModeOptions);
 
   socket.on('reload', function () {
     socket.broadcast.emit('reload');
@@ -53,6 +58,8 @@ socketio.on('connection', function (socket) {
   socket.on('changeScreenMode', function (newModeName, options) {
     console.log("Received request to change screen mode to " + newModeName);
     socket.broadcast.emit('changeScreenMode', newModeName, options);
+    currentScreenModeName = newModeName;
+    currentScreenModeOptions = options;
   });
 
 });
