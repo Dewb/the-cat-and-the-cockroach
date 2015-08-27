@@ -72,6 +72,14 @@ SerialInputMode.activate = function(socketio, options) {
 
 }
 
+SerialInputMode.getOptions = function() {
+  return this.options;
+}
+
+SerialInputMode.updateOptions = function(options) {
+  this.options = options;
+}
+
 SerialInputMode.deactivate = function() {
 
   this.arduinoPort.close();

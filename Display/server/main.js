@@ -36,7 +36,7 @@ function setServerMode(newModeName, options) {
 setServerMode("SerialInput", {});
 
 var currentScreenModeName = "";
-var currentScreenModeOptions = {};
+var currentScreenModeOptions = {};  
 
 socketio.on('connection', function (socket) {
   console.log("New socket connection");
@@ -53,6 +53,15 @@ socketio.on('connection', function (socket) {
   socket.on('changeServerMode', function (newModeName, options) {
     console.log("Received request to change server mode to " + newModeName);
     setServerMode(newModeName, options);
+    socket.emit('serverModeOptions', options);
+  });
+
+  socket.on('getServerModeOptions', function () {
+    socket.emit('serverModeOptions', currentServerMode.getOptions());
+  });
+
+  socket.on('updateServerModeOptions', function (options) {
+    currentServerMode.updateOptions(options);
   });
 
   socket.on('changeScreenMode', function (newModeName, options) {

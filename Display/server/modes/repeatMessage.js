@@ -37,6 +37,14 @@ RepeatMessageMode.activate = function(socketio, options) {
   createKeyEvent(socketio, 0, options);
 }
 
+RepeatMessageMode.getOptions = function() {
+  return this.options;
+}
+
+RepeatMessageMode.updateOptions = function(options) {
+  this.options = options;
+}
+
 RepeatMessageMode.deactivate = function() {
   timers.clearTimeout(nextTimeout);
 

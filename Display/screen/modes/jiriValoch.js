@@ -155,7 +155,7 @@ JiriValochMode.prototype.getOptions = function() {
 
 JiriValochMode.prototype.onKeyHit = function(data) {
 	var options = this.getOptions();
-	if (data != "\n" && data != "«") {
+	if (data != "\n" && data != "«" && data != " ") {
 		options.word = data;
 		this.updateOptions(options);
 	}

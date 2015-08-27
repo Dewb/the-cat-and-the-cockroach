@@ -2,9 +2,21 @@
 <html>
 <head>
 	<title></title>
-    <script src="/common/jquery.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-	<style>
+  <script src="/common/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+	<link rel="stylesheet" href="lib/slickgrid/slick.grid.css"/>
+  <link rel="stylesheet" href="lib/slickgrid/slick-default-theme.css"/>
+  <script src="lib/jquery.event.drag-2.2.js"></script> 
+  <script src="lib/slickgrid/slick.core.js" type="text/javascript" charset="utf-8"></script>
+  <script src="lib/slickgrid/plugins/slick.cellrangedecorator.js"></script>
+  <script src="lib/slickgrid/plugins/slick.cellrangeselector.js"></script>
+  <script src="lib/slickgrid/plugins/slick.cellselectionmodel.js"></script>
+  <script src="lib/slickgrid/plugins/slick.autotooltips.js"></script> 
+  <script src="lib/slickgrid/slick.formatters.js"></script>
+  <script src="lib/slickgrid/slick.editors.js" type="text/javascript" charset="utf-8"></script>
+   <script src="lib/slickgrid/slick.grid.js" type="text/javascript" charset="utf-8"></script>
+
+  <style>
   		@font-face {
  			  font-family: 'UnderwoodChampion';
   			src: url('/common/uwch.ttf');
@@ -13,8 +25,45 @@
   			font-family: "UnderwoodChampion"; background-color: white; color: black; font-size: 14pt;
   			width: 100%; height: 100%;;
   		}
+      div.optionsGrid {
+        font-family: serif;
+        margin: 1em;
+        padding: 0em;
+        border: 1px solid gray;
+      }
+      button {
+        background-color: black;
+        font-family: "UnderwoodChampion";
+        color: white;
+        padding: 0.75em;
+      }
 	</style>
 	<script>
+
+  function createOptionsGrid(div, options) {
+    var optionList = [];
+    for (key in options) {
+      optionList.push({ name: key, value: options[key] });
+    }
+    var grid = new Slick.Grid(div, optionList,
+      [
+        { id: "name", name: "Name", field: "name", width: 120 },
+        { id: "value", name: "Value", field: "value", width: 300, editor: Slick.Editors.Text },
+      ],
+      {
+        editable: true,
+        autoEdit: false,
+        enableCellNavigation: true,
+        enableColumnReorder: false,
+        autoHeight: true
+      }
+    );
+
+    grid.onCellChange.subscribe(function(e, args) {       
+      console.log(args.item.name);
+      console.log(args.item.value);
+    });
+  }
 
 	$(document).ready(function() {
 
@@ -23,6 +72,13 @@
 		socket.on('reload', function() {
 			window.location.reload();
 		});
+
+    socket.on('serverModeOptions', function(options) {
+      createOptionsGrid($('#serverModeOptions'), options);
+      //$('#serverModeOptions').text(JSON.stringify(options));
+    });
+
+    socket.emit('getServerModeOptions');
 
     $('button.serverMode').on("click", function(e) {
       socket.emit('changeServerMode', e.target.id, {});
@@ -41,9 +97,13 @@
     <button class="serverMode" id="SerialInput">SerialInput</button>
     <button class="serverMode" id="RepeatMessage">RepeatMessage</button>
   </div>
+  <div class="optionsGrid" id="serverModeOptions">
+  </div>
   <div>
     Screen Mode
     <button class="screenMode" id="BasicPaper">BasicPaper</button>
     <button class="screenMode" id="JiriValoch">JiriValoch</button>
+  </div>
+  <div class="optionsGrid" id="screenModeOptions">
   </div>
 </body>
