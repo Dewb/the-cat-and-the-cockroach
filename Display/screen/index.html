@@ -2,14 +2,15 @@
 <html>
 <head>
 	<title></title>
-    <script src="jquery.min.js"></script>
+    <script src="/common/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="audio.js"></script>
-    <script src="modes/basic_paper.js"></script>
-    <script src="http://localhost:8000/socket.io/socket.io.js"></script>
+    <script src="modes/basicPaper.js"></script>
+    <script src="modes/jiriValoch.js"></script>
 	<style>
   		@font-face {
  			font-family: 'UnderwoodChampion';
-  			src: url('uwch.ttf');
+  			src: url('/common/uwch.ttf');
 		}
   		body { 
   			font-family: "UnderwoodChampion"; background-color: white; color: black; font-size: 22pt;
@@ -59,11 +60,11 @@
       currentScreenMode.onKeyHit(data);
 		});
 
-    socket.on('changeScreenMode', function (modeName) {
+    socket.on('changeScreenMode', function (modeName, options) {
       if (modeName == "BasicPaper") {
         window.currentScreenMode = new BasicPaperMode($(document.body), { lineLength: 46, defaultText: false });
-      } else {
-
+      } else if (modeName == "JiriValoch") {
+        window.currentScreenMode = new JiriValochMode($(document.body), options);
       }
     });
 

@@ -8,6 +8,7 @@ server.listen(webport, function () {
   console.log('Web server listening at port %d', webport);
 });
 
+app.use('/common', express.static(__dirname + '/../common'));
 app.use('/screen', express.static(__dirname + '/../screen'));
 app.use('/control', express.static(__dirname + '/../control'));
 
@@ -28,6 +29,7 @@ function setServerMode(newModeName, options) {
     }
     currentMode = serverModeList[newModeName];
     currentMode.activate(socketio, options);
+    console.log("Server mode now " + newModeName);
   }
 }
 
@@ -43,8 +45,14 @@ socketio.on('connection', function (socket) {
   socket.on('disconnect', function () {
   });
 
-  socket.on('switchServerMode', function (newModeName, options) {
+  socket.on('changeServerMode', function (newModeName, options) {
+    console.log("Received request to change server mode to " + newModeName);
     setServerMode(newModeName, options);
+  });
+
+  socket.on('changeScreenMode', function (newModeName, options) {
+    console.log("Received request to change screen mode to " + newModeName);
+    socket.broadcast.emit('changeScreenMode', newModeName, options);
   });
 
 });

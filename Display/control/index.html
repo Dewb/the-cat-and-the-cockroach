@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+    <script src="/common/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+	<style>
+  		@font-face {
+ 			  font-family: 'UnderwoodChampion';
+  			src: url('/common/uwch.ttf');
+		  }
+  		body { 
+  			font-family: "UnderwoodChampion"; background-color: white; color: black; font-size: 14pt;
+  			width: 100%; height: 100%;;
+  		}
+	</style>
+	<script>
+
+	$(document).ready(function() {
+
+		window.socket = io("http://localhost:8000", { 'path': '/socket.io' });
+
+		socket.on('reload', function() {
+			window.location.reload();
+		});
+
+    $('button.serverMode').on("click", function(e) {
+      socket.emit('changeServerMode', e.target.id, {});
+    });
+
+    $('button.screenMode').on("click", function(e) {
+      socket.emit('changeScreenMode', e.target.id, {});
+    });
+
+	});
+	</script>
+</head>
+<body>
+  <div>
+    Server Mode
+    <button class="serverMode" id="SerialInput">SerialInput</button>
+    <button class="serverMode" id="RepeatMessage">RepeatMessage</button>
+  </div>
+  <div>
+    Screen Mode
+    <button class="screenMode" id="BasicPaper">BasicPaper</button>
+    <button class="screenMode" id="JiriValoch">JiriValoch</button>
+  </div>
+</body>
