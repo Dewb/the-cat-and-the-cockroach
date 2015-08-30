@@ -33,7 +33,7 @@ socketio.on('connection', function (socket) {
 // Log input to the filesystem
 
 var fs = require("fs");
-var logFile = fs.createWriteStream("/Users/dewb/blunderwood_log", { flags: 'a' });
+var logFile = fs.createWriteStream("/home/dewb/blunderwood_log", { flags: 'a' });
 
 // Serial communication to Arduino or virtual serial port
 
