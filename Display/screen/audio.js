@@ -29,6 +29,11 @@ function RapidSoundPlayer(context, urlList) {
 }
 
 RapidSoundPlayer.prototype.playSound = function(type, rounds, interval, random, random2) {
+  if (!this.buffers || !(type in this.buffers)) {
+    // sound not loaded yet
+    return;
+  }
+
   if (typeof random == 'undefined') {
     random = 0;
   }
