@@ -1,5 +1,6 @@
 // Serial communication to Arduino or virtual serial port
 var serial = require("serialport");
+var timers = require("timers");
 
 // Log input to the filesystem
 var fs = require("fs");
@@ -37,16 +38,39 @@ SerialInputMode.activate = function(socketio, options) {
 
   this.options = options;
   this.socketio = socketio;
+  this.connected = false;
+  this.connect();
+}
+
+SerialInputMode.retry = function() {
+  if (!this.gaveNoSerialWarning) {
+    console.log("Could not open a serial device, waiting...");
+    this.gaveNoSerialWarning = true;
+  }
   var modeContext = this;
+  timers.setTimeout(function() { modeContext.connect() }, 5000);
+}
 
-  var arduinoPortName = defaultArduinoPortName;
+SerialInputMode.connect = function() {
 
+  var arduinoPortName = null;
+  var modeContext = this;
+  
   serial.list(function (err, ports) {
     ports.forEach(function(port) {
       if (port.comName.substring(0, portPrefix.length) == portPrefix) {
         arduinoPortName = port.comName;
       }
     });
+  
+    if (!arduinoPortName && fs.existsSync(defaultArduinoPortName)) {
+       arduinoPortName = defaultArduinoPortName; 
+    }
+  
+    if (!arduinoPortName) {
+       modeContext.retry();
+       return;
+    }
  
     var arduinoPort = new serial.SerialPort(arduinoPortName, {
       baudrate: 115200,
@@ -57,19 +81,34 @@ SerialInputMode.activate = function(socketio, options) {
     });
 
     modeContext.arduinoPort = arduinoPort;
+    arduinoPort.on("open", function (err) {
+      if (err) {
+        modeContext.retry();
+      } else {
+        console.log('Serial connection to ' + arduinoPortName + ' established');
+        modeContext.connected = true;
 
-    arduinoPort.on("open", function () {
-      console.log('Serial connection to ' + arduinoPortName + ' established');
+        arduinoPort.on('data', function(rawdata) {
+          var data = ab2str(rawdata);
+          console.log('data received: ' + data);
+          logFile.write(data);
+          modeContext.socketio.emit('t', data);
+        });
+        
+        arduinoPort.on('close', function() {
+          console.log("Serial device disconnected, retrying...");
+          this.gaveNoSerialWarning = true;
+          modeContext.retry();
+        });
 
-      arduinoPort.on('data', function(rawdata) {
-        var data = ab2str(rawdata);
-        console.log('data received: ' + data);
-        logFile.write(data);
-        socketio.emit('t', data);
-      });
+        arduinoPort.on('error', function(err) {
+          console.log("Unexpected serial device error: " + err);
+          arduinoPort.close();
+        });
+      }
     });
+  
   });
-
 }
 
 SerialInputMode.getOptions = function() {
