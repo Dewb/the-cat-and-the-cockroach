@@ -54,7 +54,7 @@
 
 		var socket = io("http://localhost:8000", { 'path': '/socket.io' });
 
-    window.currentScreenMode = new BasicPaperMode($(document.body), { lineLength: 46, defaultText: false });
+    window.currentScreenMode = new BasicPaperMode($(document.body), { lineLength: 46, defaultText: true});
 
 		socket.on('t', function (data) {
       currentScreenMode.onKeyHit(data);
