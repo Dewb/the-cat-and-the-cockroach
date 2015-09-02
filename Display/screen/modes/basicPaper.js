@@ -104,7 +104,7 @@ BasicPaperMode.prototype.onKeyHit = function(data) {
     	this.currentLineCharactersInked = 0;
     	this.currentLineBackspaceCount = 0;
 
-        $('#currentLine').css("left", -options.lineOffset + "em");
+        $('#currentLine').css("left", -this.options.lineOffset + "em");
 
 	} else if (data == "«") {
 		
