@@ -1,12 +1,12 @@
 var BasicPaperMode = function(container, options) {
 	
 	options = options || {};
-	options.lineLength = options.lineLength || 46;
+	options.lineLength = options.lineLength || 56;
 	options.top = options.top || 6;
-	options.height = options.height || 16;
-	options.marginTop = options.marginTop || 6;
+	options.height = options.height || 17;
+	options.marginTop = options.marginTop || 7;
 	options.marginLeft = options.marginLeft || 5;
-	options.width = options.width || 32;
+	options.width = options.width || 33;
 	options.fontSize = options.fontSize || 22;
 	options.lineOffset = options.lineOffset || 12;
 
@@ -67,6 +67,7 @@ BasicPaperMode.prototype.updateOptions = function(options) {
 		"top": (options.top + options.height) + "em",
 		"height": (options.fontSize * 1.363) + "pt",
 		"margin-left": 0,
+                "margin-top": "1em",
 		"left" : -options.lineOffset + "em",
 		"width": options.width + "em",
 		"font-size": options.fontSize + "pt",
@@ -102,6 +103,8 @@ BasicPaperMode.prototype.onKeyHit = function(data) {
 
     	this.currentLineCharactersInked = 0;
     	this.currentLineBackspaceCount = 0;
+
+        $('#currentLine').css("left", -options.lineOffset + "em");
 
 	} else if (data == "«") {
 		
