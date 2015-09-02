@@ -96,10 +96,7 @@ BasicPaperMode.prototype.onKeyHit = function(data) {
     	// Clear the line
     	$('#currentLine').empty();
 
-    	// If the line was long enough, play the pullback sound	
-    	if (this.currentLineCharactersInked > 6) {
-      		soundPlayer.playSound(getRandomIndex(2, 6), 1, 0, 0.03, 0.12); // carriage pullback
-    	}
+    	soundPlayer.playSound(getRandomIndex(2, 6), 1, 0, 0.03, 0.12); // carriage pullback
 
     	this.currentLineCharactersInked = 0;
     	this.currentLineBackspaceCount = 0;
