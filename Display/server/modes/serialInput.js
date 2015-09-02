@@ -21,7 +21,15 @@ var portPrefix = hardwarePortPrefixes[os.platform()];
 function byteToHTML(byte) {
   if (byte == 0x08 || byte == 0x7F) { // backspace
     return '«';
-  }   
+  } else if (byte == 61) { // extended ASCII chars remapped for Arduino compiler
+	return "¼";  
+  } else if (byte == 60) {
+	return "½";
+  } else if (byte == 62) {
+	return "¢"; 
+  } else if (byte == 92) {
+	return "¾";
+  }
 
   return String.fromCharCode(byte);
 }
